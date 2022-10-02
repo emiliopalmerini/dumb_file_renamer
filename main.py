@@ -1,19 +1,34 @@
 import os
-import re
+import glob
 
+counter = 1
+dir_name = 'C:\\Users\\Emilio\Desktop\\trasferimenti\\images\\'
+list_of_files = sorted(filter(os.path.isfile,
+                              glob.glob(dir_name + '*')))
+# 'C:\\Users\\Emilio\\Desktop\\trasferimenti\\images\\tavola_ottimizzata_25_episodio_4_07.jpg'
 
-def rename_files(directory, new_name, filter):
-    files = os.listdir(directory)
-    counter = 1
+for index, file in enumerate(list_of_files):
+    src = file
+    src_tavola = 'tavola_ottimizzata_' + file.split('\\')[-1].split('_')[2]
+    episode_number = file.split('\\')[-1].split('_')[4]
+    episode = 'episodio_' + file.split('\\')[-1].split('_')[4]
+    if counter == 1:
+        previous_episode_number = episode_number
+    else:
+        previous_episode_number = list_of_files[index-1].split('\\')[-1].split('_')[4]
+    base_path = 'C:\\Users\\Emilio\Desktop\\trasferimenti\\images_renamed\\'
 
-    for file in files:
-        if re.match(filter, file):
-            file_extension = "." + file.split('.')[-1]
-            os.rename(os.path.join(directory, file), os.path.join(directory, new_name + str(counter) + filter))
-            counter += 1
-            os.rename(directory + file, directory + new_name + str(counter) + file_extension)
-            print('Renamed ' + file + ' to ' + new_name + str(counter) + file_extension)
+    if counter < 10:
+        panel = 'vignetta_000'
+    elif counter < 100:
+        panel = 'vignetta_00'
+    else:
+        panel = 'vignetta_0'
+    dst = base_path + episode + '_' + src_tavola + '_' + panel + str(counter) + '.jpg'
+    os.rename(src, dst)
+    if previous_episode_number == episode_number:
+        counter += 1
+    else:
+        counter = 1
 
-
-rename_files("/Downloads/test_renamer/", 'new_name', 'txt')
 
