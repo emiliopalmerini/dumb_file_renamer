@@ -88,22 +88,26 @@ def transform_regions_in_panels(regions):
     return pans
 
 
-dir_name = "inputs"
+def remove_too_small_pans(panels, boxes, image):
+    for k, boxes in reversed(list(enumerate(pans))):
+        area = (boxes[2] - boxes[0]) * (boxes[3] - boxes[1])
+        if area < 0.01 * image.shape[0] * image.shape[1]:
+            del panels[k]
+
+
+dir_name = "/Users/emiliopalmerini/repos/dumb_file_renamer/inputs"
 list_of_files = sorted(filter(os.path.isfile, glob.glob(dir_name + "*")))
 
 for i, im in enumerate(list_of_files):
     image = imageio.imread(im)
     regs = transform_image_in_regions(image)
     pans = transform_regions_in_panels(regs)
-    for i, bbox in reversed(list(enumerate(pans))):
-        area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
-        if area < 0.01 * image.shape[0] * image.shape[1]:
-            del pans[i]
+    remove_too_small_pans(pans, bbox, image)
 
     clusters = cluster_bboxes(pans)
 
-    for i, bbox in enumerate(flatten(clusters)):
+    for p, bbox in enumerate(flatten(clusters)):
         panel = image[bbox[0] : bbox[2], bbox[1] : bbox[3]]
-        Image.fromarray(panel).save(f"outputs/vignetta_{i}.png")
+        Image.fromarray(panel).save(f"outputs/vignetta_{p}_tavola_{i}.png")
 
 # TODO: make a compressor for image files
