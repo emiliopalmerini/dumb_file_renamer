@@ -1,6 +1,4 @@
-import os
 import glob
-import os
 import numpy as np
 import imageio
 
@@ -12,6 +10,9 @@ from skimage.measure import label
 from skimage.color import label2rgb
 from scipy import ndimage as ndi
 from skimage.measure import regionprops
+import sys
+
+sys.setrecursionlimit(15000000)
 
 
 def do_bboxes_overlap(a, b):
@@ -77,10 +78,9 @@ def transform_regions_in_panels(regions):
     pans = []
 
     for region in regions:
-
-        for i, panel in enumerate(pans):
+        for f, panel in enumerate(pans):
             if do_bboxes_overlap(region.bbox, panel):
-                pans[i] = merge_bboxes(panel, region.bbox)
+                pans[f] = merge_bboxes(panel, region.bbox)
                 break
         else:
             pans.append(region.bbox)
@@ -88,26 +88,28 @@ def transform_regions_in_panels(regions):
     return pans
 
 
-def remove_too_small_pans(panels, boxes, image):
-    for k, boxes in reversed(list(enumerate(pans))):
-        area = (boxes[2] - boxes[0]) * (boxes[3] - boxes[1])
+def remove_too_small_pans(panels, image):
+    for k, bbox in reversed(list(enumerate(pans))):
+        area = (bbox[2] - bbox[0]) * (bbox[3] - bbox[1])
         if area < 0.01 * image.shape[0] * image.shape[1]:
             del panels[k]
 
 
-dir_name = "/Users/emiliopalmerini/repos/dumb_file_renamer/inputs"
-list_of_files = sorted(filter(os.path.isfile, glob.glob(dir_name + "*")))
+dir_name = "/Users/emiliopalmerini/repos/dumb_file_renamer/inputs/"
+list_of_files = sorted(glob.glob(dir_name + "*"))  # filter(os.path.isfile,)
 
-for i, im in enumerate(list_of_files):
-    image = imageio.imread(im)
+
+for i, file in enumerate(list_of_files):
+    numeroTavola = file.split("/")[-1].split("_")[-1].split(".")[-2]
+    image = imageio.imread(file)
     regs = transform_image_in_regions(image)
     pans = transform_regions_in_panels(regs)
-    remove_too_small_pans(pans, bbox, image)
+    remove_too_small_pans(pans, image)
 
     clusters = cluster_bboxes(pans)
 
     for p, bbox in enumerate(flatten(clusters)):
         panel = image[bbox[0] : bbox[2], bbox[1] : bbox[3]]
-        Image.fromarray(panel).save(f"outputs/vignetta_{p}_tavola_{i}.png")
+        Image.fromarray(panel).save(f"outputs/tavola_{numeroTavola}_vignetta_{p}.png")
 
 # TODO: make a compressor for image files
