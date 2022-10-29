@@ -105,3 +105,5 @@ for i, im in enumerate(list_of_files):
     for i, bbox in enumerate(flatten(clusters)):
         panel = image[bbox[0] : bbox[2], bbox[1] : bbox[3]]
         Image.fromarray(panel).save(f"panels/vignetta_{i}.png")
+
+# TODO: make a compressor for image files
