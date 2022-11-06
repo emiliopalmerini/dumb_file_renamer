@@ -1,6 +1,7 @@
 import glob
 import numpy as np
 import imageio
+import PIL as PIL
 
 from PIL import Image
 from skimage.color import rgb2gray
@@ -94,22 +95,30 @@ def remove_too_small_pans(panels, image):
         if area < 0.01 * image.shape[0] * image.shape[1]:
             del panels[k]
 
+def save_opt_image(img, n, f='webp', q = 10):
+    Image.fromarray(img).save(
+        n,
+        format= f,
+        quality= q,)
 
 dir_name = "/Users/emiliopalmerini/repos/dumb_file_renamer/inputs/"
 list_of_files = sorted(glob.glob(dir_name + "*"))  # filter(os.path.isfile,)
 
 
 for i, file in enumerate(list_of_files):
-    numeroTavola = file.split("/")[-1].split("_")[-1].split(".")[-2]
+    numero_tavola = file.split("/")[-1].split("_")[1]
+    numero_episodio = file.split("/")[-1].split("_")[3]
+    numero_capitolo = file.split("/")[-1].split(".")[0].split("_")[-1]
     image = imageio.imread(file)
-    regs = transform_image_in_regions(image)
-    pans = transform_regions_in_panels(regs)
-    remove_too_small_pans(pans, image)
+    table_name = f"outputs/compressed_tables/tavola_{numero_tavola}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp" 
+    save_opt_image(image, table_name)
+    # regs = transform_image_in_regions(image)
+    # pans = transform_regions_in_panels(regs)
+    # remove_too_small_pans(pans, image)
 
-    clusters = cluster_bboxes(pans)
+    # clusters = cluster_bboxes(pans)
 
-    for p, bbox in enumerate(flatten(clusters)):
-        panel = image[bbox[0] : bbox[2], bbox[1] : bbox[3]]
-        Image.fromarray(panel).save(f"outputs/tavola_{numeroTavola}_vignetta_{p}.png")
-
-# TODO: make a compressor for image files
+    # for p, bbox in enumerate(flatten(clusters)):
+    #     panel = image[bbox[0] : bbox[2], bbox[1] : bbox[3]]
+    #     panel_name = f"outputs/panels/tavola_{numero_tavola}_vignetta_{p}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp"
+    #     save_opt_image(panel, panel_name)
