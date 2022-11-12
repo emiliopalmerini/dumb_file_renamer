@@ -104,7 +104,7 @@ def save_opt_image(img, n, f="webp", q=10):
     )
 
 
-dir_name = "/Users/emiliopalmerini/repos/dumb_file_renamer/inputs/"
+dir_name = "./inputs/"
 list_of_files = sorted(glob.glob(dir_name + "*"))  # filter(os.path.isfile,)
 
 
@@ -113,7 +113,7 @@ for i, file in enumerate(list_of_files):
     numero_episodio = file.split("/")[-1].split("_")[3]
     numero_capitolo = file.split("/")[-1].split(".")[0].split("_")[-1]
     image = imageio.imread(file)
-    table_name = f"outputs/compressed_tables/tavola_{numero_tavola}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp"
+    table_name = f"./outputs/compressed_tables/tavola_{numero_tavola}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp"
     save_opt_image(image, table_name, "webp", 25)
     regs = transform_image_in_regions(image)
     pans = transform_regions_in_panels(regs)
@@ -123,5 +123,5 @@ for i, file in enumerate(list_of_files):
 
     for p, bbox in enumerate(flatten(clusters)):
         panel = image[bbox[0] : bbox[2], bbox[1] : bbox[3]]
-        panel_name = f"outputs/panels/tavola_{numero_tavola}_vignetta_{p}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp"
+        panel_name = f"./outputs/panels/tavola_{numero_tavola}_vignetta_{p}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp"
         save_opt_image(panel, panel_name)
