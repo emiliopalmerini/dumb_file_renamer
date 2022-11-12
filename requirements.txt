@@ -1,5 +1,6 @@
-numpy
-imageio
-pillow
+# To ensure app dependencies are ported from your virtual environment/host machine into your container, run 'pip freeze > requirements.txt' in the terminal to overwrite this file
+pip
 glob
-scikit-image
+numpy 
+imageio.v2
+pillow
