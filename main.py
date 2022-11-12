@@ -1,6 +1,6 @@
 import glob
 import numpy as np
-import imageio
+import imageio.v2 as imageio
 import PIL as PIL
 
 from PIL import Image
