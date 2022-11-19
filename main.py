@@ -114,7 +114,7 @@ for i, file in enumerate(list_of_files):
     numero_capitolo = file.split("/")[-1].split(".")[0].split("_")[-1]
     image = imageio.imread(file)
     table_name = f"./outputs/compressed_tables/tavola_{numero_tavola}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp"
-    save_opt_image(image, table_name, "webp", 25)
+    save_opt_image(image, table_name, "webp", 50)
     regs = transform_image_in_regions(image)
     pans = transform_regions_in_panels(regs)
     remove_too_small_pans(pans, image)
