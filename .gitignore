@@ -130,5 +130,6 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-.inputs/*
-.outputs/*
+inputs/*
+outputs/compressed_tables/*
+outputs/panels/*

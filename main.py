@@ -1,4 +1,5 @@
 import glob
+import re
 import numpy as np
 import imageio.v2 as imageio
 import PIL as PIL
@@ -103,15 +104,20 @@ def save_opt_image(img, n, f="webp", q=10):
         quality=q,
     )
 
+def find_pattern(input_string, pattern):
+    match = re.search(pattern, input_string)
+    if match:
+        return match.group(1) 
 
 dir_name = "./inputs/"
 list_of_files = sorted(glob.glob(dir_name + "*"))  # filter(os.path.isfile,)
 
 
 for i, file in enumerate(list_of_files):
-    numero_tavola = file.split("/")[-1].split("_")[1]
-    numero_episodio = file.split("/")[-1].split("_")[3]
-    numero_capitolo = file.split("/")[-1].split(".")[0].split("_")[-1]
+    numero_tavola = find_pattern(file, "Tav(\d+)") 
+    numero_episodio = find_pattern(file, "ep(\d+)")
+    numero_capitolo = find_pattern(file, "cap(\d+)") 
+
     image = imageio.imread(file)
     table_name = f"./outputs/compressed_tables/tavola_{numero_tavola}_episodio_{numero_episodio}_capitolo_{numero_capitolo}.webp"
     save_opt_image(image, table_name, "webp", 50)
